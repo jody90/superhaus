@@ -18,6 +18,24 @@ var iotData = new AWS.IotData({ endpoint: config.IOT_BROKER_ENDPOINT });
 
 var Alexa = require("alexa-sdk");
 
+
+AWS.config.update({
+  region: "eu-central-1",
+  endpoint: "arn:aws:dynamodb:eu-central-1:382148086715:table/temperatures"
+});
+
+var docClient = new AWS.DynamoDB.DocumentClient();
+
+var params = {
+    TableName : "temperatures"
+};
+
+
+
+
+
+
+
 exports.handler = function (event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.appId = APP_ID;
@@ -42,6 +60,18 @@ var handlers = {
         });
     },
     'LaunchRequest': function () {
+
+        docClient.query(params, function(err, data) {
+            if (err) {
+                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+            } else {
+                console.log("Query succeeded.");
+                data.Items.forEach(function(item) {
+                    console.log(" -", item.year + ": " + item.title);
+                });
+            }
+        });
+
         this.emit('StartIntent');
     },
     'StartIntent': function () {
