@@ -63,3 +63,5 @@ typings/
 /src/config.json
 /.idea/
 /*.iml
+
+artifact.zip
