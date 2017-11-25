@@ -15,8 +15,6 @@ var AWS = require('aws-sdk');
 AWS.config.region = config.IOT_BROKER_REGION;
 //Initializing client for IoT
 var iotData = new AWS.IotData({ endpoint: config.IOT_BROKER_ENDPOINT });
-// var iot
-var topic = "topic_1";
 
 var Alexa = require("alexa-sdk");
 
@@ -53,7 +51,7 @@ var handlers = {
         var temp = this.event.request.intent.slots.Temperature.value;
 
         if (isNaN(temp)) {
-            that.emit(':ask', "Entschuldige aber ich habe dich nicht genau verstanden. Bitte wiederhole deinen Wunsch noch einmal.");            
+            this.emit(':ask', "Entschuldige aber ich habe dich nicht genau verstanden. Bitte wiederhole deinen Wunsch noch einmal.");            
         }
 
         var answerString = "ok. Ich habe die Temperatur auf " + temp + " Grad eingestellt.";
@@ -63,5 +61,14 @@ var handlers = {
     },
     "Unhandled": function () {
         this.emit(':tell', 'keine ahnung');
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', 'Auf wiedersehen! Bis bald.');
+    },
+    'AMAZON.NoIntent': function () {
+        this.emit("AMAZON.StopIntent");
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit("AMAZON.StopIntent");
     }
 };
